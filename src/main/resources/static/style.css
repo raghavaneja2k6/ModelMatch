@@ -318,6 +318,13 @@ body.dark-theme {
     cursor: pointer;
 }
 
+.top-nav-brand {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    user-select: none;
+}
+
 .model-selector-pill {
     display: flex;
     align-items: center;

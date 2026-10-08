@@ -759,11 +759,9 @@
                 const jEl = document.getElementById('specJavaVersion');
                 const kEl = document.getElementById('specApiKeyMasked');
                 const mEl = document.getElementById('specModelCount');
-                const topPill = document.getElementById('topNavModelBadge');
                 if (jEl && data.javaVersion) jEl.textContent = 'Java ' + data.javaVersion;
                 if (kEl) kEl.textContent = data.geminiConfigured ? 'Active (Server-Side Key)' : 'Standby (Local Pure Java Mode)';
                 if (mEl && data.modelsLoaded) mEl.textContent = `${data.modelsLoaded} Frontier Models (SQLite Persistent)`;
-                if (topPill && data.modelsLoaded) topPill.textContent = `${data.modelsLoaded} Multi-Provider Models`;
             }
         } catch (e) {
             console.error('Health fetch error:', e);
