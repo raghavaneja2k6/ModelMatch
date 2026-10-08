@@ -419,9 +419,10 @@
                     <div class="winner-header-row">
                         <div>
                             <div class="winner-badges">
-                                <span class="gold-rank-badge">🥇 #1 Top Match</span>
+                                <span class="gold-rank-badge">🥇 #1 Recommended Model</span>
                                 <span class="category-tag">🎯 Intent: ${escapeHtml(data.classifiedCategory)}</span>
                                 <span class="category-tag highlight">${escapeHtml(model.badge || 'Benchmark Winner')}</span>
+                                ${model.directExecutionSupported ? '<span class="exec-badge ready">⚡ Direct API: Ready</span>' : '<span class="exec-badge external">📋 API: Recommendation Only</span>'}
                             </div>
                             <div class="winner-title">${escapeHtml(model.name)}</div>
                             <div class="winner-provider">Provider: ${escapeHtml(model.provider)} &bull; ${escapeHtml(model.license)}</div>
@@ -484,12 +485,13 @@
                     ` : ''}
                 </div>
 
-                <!-- GEMINI 3.5 FLASH DEEP COMMENTARY -->
+                <!-- AI ARCHITECTURAL ANALYSIS (POWERED BY GEMINI) -->
                 ${data.geminiAiInsights ? `
                     <div class="gemini-insight-box">
                         <div class="gemini-insight-header">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                            <span>Gemini 3.5 Flash Technical Assessment</span>
+                            <span>AI Architectural Analysis (Powered by Gemini 3.5 Flash)</span>
+                            <span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">Assessment of: ${escapeHtml(model.name)}</span>
                         </div>
                         <div class="gemini-insight-text">${escapeHtml(data.geminiAiInsights)}</div>
                     </div>
@@ -532,7 +534,7 @@
                                     <div class="alt-left">
                                         <span class="alt-rank">#${alt.rank}</span>
                                         <div>
-                                            <div class="alt-name">${escapeHtml(alt.model.name)}</div>
+                                            <div class="alt-name">${escapeHtml(alt.model.name)} ${alt.model.directExecutionSupported ? '<span class="exec-badge ready" style="font-size:9.5px;padding:1px 6px;">⚡ Direct API</span>' : '<span class="exec-badge external" style="font-size:9.5px;padding:1px 6px;">📋 Recom. Only</span>'}</div>
                                             <div class="alt-provider">${escapeHtml(alt.model.provider)} &bull; ${escapeHtml(alt.model.benchmarkSource)}</div>
                                         </div>
                                     </div>
@@ -638,6 +640,11 @@
 
     function renderCatalogTable() {
         if (!catalogTableBody) return;
+        const countBadge = document.getElementById('catalogModelCount');
+        if (countBadge && allModels.length > 0) {
+            countBadge.textContent = `${allModels.length} Models`;
+        }
+
         const q = (catalogSearchInput.value || '').toLowerCase();
         const filtered = allModels.filter(m =>
             m.name.toLowerCase().includes(q) ||
@@ -649,6 +656,7 @@
             <tr>
                 <td><strong>${escapeHtml(m.name)}</strong></td>
                 <td>${escapeHtml(m.provider)}</td>
+                <td>${m.directExecutionSupported ? '<span class="exec-badge ready" style="font-size:10px;">⚡ Direct API</span>' : '<span class="exec-badge external" style="font-size:10px;">📋 Recom. Only</span>'}</td>
                 <td><span style="color:#8b5cf6;font-weight:600;">${m.reasoningScore}</span></td>
                 <td><span style="color:#3b82f6;font-weight:600;">${m.codingScore}</span></td>
                 <td>${formatNumber(m.contextWindowTokens)}</td>
@@ -714,6 +722,7 @@
                 <div class="compare-card">
                     <div class="compare-title">${escapeHtml(mA.name)}</div>
                     <div class="compare-provider">${escapeHtml(mA.provider)} &bull; ${escapeHtml(mA.license)}</div>
+                    <div class="compare-metric-row"><span>Execution Support:</span><strong>${mA.directExecutionSupported ? '<span class="exec-badge ready">⚡ Direct API Ready</span>' : '<span class="exec-badge external">📋 Recommendation Only</span>'}</strong></div>
                     <div class="compare-metric-row"><span>Reasoning:</span><strong>${mA.reasoningScore} / 100 ${badgeA(mA.reasoningScore, mB.reasoningScore)}</strong></div>
                     <div class="compare-metric-row"><span>Coding:</span><strong>${mA.codingScore} / 100 ${badgeA(mA.codingScore, mB.codingScore)}</strong></div>
                     <div class="compare-metric-row"><span>Context Window:</span><strong>${formatTokens(mA.contextWindowTokens)} ${badgeA(mA.contextWindowTokens, mB.contextWindowTokens)}</strong></div>
@@ -726,6 +735,7 @@
                 <div class="compare-card">
                     <div class="compare-title">${escapeHtml(mB.name)}</div>
                     <div class="compare-provider">${escapeHtml(mB.provider)} &bull; ${escapeHtml(mB.license)}</div>
+                    <div class="compare-metric-row"><span>Execution Support:</span><strong>${mB.directExecutionSupported ? '<span class="exec-badge ready">⚡ Direct API Ready</span>' : '<span class="exec-badge external">📋 Recommendation Only</span>'}</strong></div>
                     <div class="compare-metric-row"><span>Reasoning:</span><strong>${mB.reasoningScore} / 100 ${badgeA(mB.reasoningScore, mA.reasoningScore)}</strong></div>
                     <div class="compare-metric-row"><span>Coding:</span><strong>${mB.codingScore} / 100 ${badgeA(mB.codingScore, mA.codingScore)}</strong></div>
                     <div class="compare-metric-row"><span>Context Window:</span><strong>${formatTokens(mB.contextWindowTokens)} ${badgeA(mB.contextWindowTokens, mA.contextWindowTokens)}</strong></div>
@@ -748,8 +758,12 @@
                 const data = await res.json();
                 const jEl = document.getElementById('specJavaVersion');
                 const kEl = document.getElementById('specApiKeyMasked');
+                const mEl = document.getElementById('specModelCount');
+                const topPill = document.getElementById('topNavModelBadge');
                 if (jEl && data.javaVersion) jEl.textContent = 'Java ' + data.javaVersion;
-                if (kEl) kEl.textContent = data.geminiConfigured ? 'Connected (Server-Side)' : 'Standby (Offline Mode)';
+                if (kEl) kEl.textContent = data.geminiConfigured ? 'Active (Server-Side Key)' : 'Standby (Local Pure Java Mode)';
+                if (mEl && data.modelsLoaded) mEl.textContent = `${data.modelsLoaded} Frontier Models (SQLite Persistent)`;
+                if (topPill && data.modelsLoaded) topPill.textContent = `${data.modelsLoaded} Multi-Provider Models`;
             }
         } catch (e) {
             console.error('Health fetch error:', e);

@@ -41,9 +41,12 @@ public class TaskRequirementExtractor {
                 outputTokens = 2000;
                 break;
             case REASONING:
-                reasoning = 0.96;
-                coding = 0.40;
-                context = 0.55;
+                reasoning = 0.98;
+                coding = 0.20;
+                context = 0.25;
+                multimodal = 0.05;
+                speed = 0.30;
+                cost = 0.25;
                 complexity = "High";
                 outputTokens = 1500;
                 break;
@@ -135,7 +138,7 @@ public class TaskRequirementExtractor {
             cost = Math.max(cost, 0.92);
         } else if (containsAny(lower, "cost", "budget", "affordable", "price sensitive")) {
             cost = Math.max(cost, 0.75);
-        } else if (containsAny(lower, "money is no object", "enterprise budget", "cost doesn't matter", "highest quality at any price")) {
+        } else if (containsAny(lower, "money is no object", "enterprise budget", "cost doesn't matter", "budget is not an issue", "budget is not a concern", "highest quality at any price")) {
             cost = 0.20;
         }
 

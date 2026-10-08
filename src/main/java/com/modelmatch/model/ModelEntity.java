@@ -1,10 +1,13 @@
 package com.modelmatch.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Entity representing an LLM, its capabilities, benchmark scores,
- * context specifications, and cost parameters.
+ * context specifications, cost parameters, and execution capabilities.
+ *
+ * Feature vector order: [Reasoning, Coding, Context, Multimodal, Speed, CostEfficiency]
  */
 public class ModelEntity {
     private String id;
@@ -27,8 +30,12 @@ public class ModelEntity {
     private String license;          // Proprietary vs Open Weights
     private String benchmarkSource;  // Verified source: SWE-bench, LiveCodeBench, MMLU-Pro, MATH-500
     private String description;
-    private List<String> strengths;
-    private List<String> weaknesses;
+    private List<String> strengths = new ArrayList<>();
+    private List<String> weaknesses = new ArrayList<>();
+
+    // Model Provider Execution & Citation Architecture (Phases 3, 4, 7)
+    private boolean directExecutionSupported; // true if ModelMatch has live API execution integration (e.g. Gemini)
+    private String sourceReference;           // Documentation / benchmark citation URL or reference
 
     public ModelEntity() {}
 
@@ -39,6 +46,20 @@ public class ModelEntity {
                        double outputCostPer1M, int speedTokensPerSec, String license,
                        String benchmarkSource, String description,
                        List<String> strengths, List<String> weaknesses) {
+        this(id, name, provider, badge, reasoningScore, codingScore, contextScore,
+             multimodalScore, speedScore, costScore, overallScore, contextWindowTokens,
+             inputCostPer1M, outputCostPer1M, speedTokensPerSec, license,
+             benchmarkSource, description, strengths, weaknesses, false, "");
+    }
+
+    public ModelEntity(String id, String name, String provider, String badge,
+                       double reasoningScore, double codingScore, double contextScore,
+                       double multimodalScore, double speedScore, double costScore,
+                       double overallScore, int contextWindowTokens, double inputCostPer1M,
+                       double outputCostPer1M, int speedTokensPerSec, String license,
+                       String benchmarkSource, String description,
+                       List<String> strengths, List<String> weaknesses,
+                       boolean directExecutionSupported, String sourceReference) {
         this.id = id;
         this.name = name;
         this.provider = provider;
@@ -57,12 +78,14 @@ public class ModelEntity {
         this.license = license;
         this.benchmarkSource = benchmarkSource;
         this.description = description;
-        this.strengths = strengths;
-        this.weaknesses = weaknesses;
+        this.strengths = strengths != null ? strengths : new ArrayList<>();
+        this.weaknesses = weaknesses != null ? weaknesses : new ArrayList<>();
+        this.directExecutionSupported = directExecutionSupported;
+        this.sourceReference = sourceReference;
     }
 
     /**
-     * Converts model capability scores into a normalized feature vector [0.0 - 1.0].
+     * Converts model capability scores into a normalized 6D feature vector [0.0 - 1.0].
      * Vector order: [Reasoning, Coding, Context, Multimodal, Speed, CostEfficiency]
      */
     public double[] getFeatureVector() {
@@ -136,4 +159,10 @@ public class ModelEntity {
 
     public List<String> getWeaknesses() { return weaknesses; }
     public void setWeaknesses(List<String> weaknesses) { this.weaknesses = weaknesses; }
+
+    public boolean isDirectExecutionSupported() { return directExecutionSupported; }
+    public void setDirectExecutionSupported(boolean directExecutionSupported) { this.directExecutionSupported = directExecutionSupported; }
+
+    public String getSourceReference() { return sourceReference; }
+    public void setSourceReference(String sourceReference) { this.sourceReference = sourceReference; }
 }

@@ -20,6 +20,11 @@ public class TaskRequirements {
     public TaskRequirements() {}
 
     public TaskRequirements(TaskCategory taskCategory, double reasoning, double coding,
+                            double context, double multimodal, double speed, double cost) {
+        this(taskCategory, reasoning, coding, context, multimodal, speed, cost, "Medium", "Standard", "");
+    }
+
+    public TaskRequirements(TaskCategory taskCategory, double reasoning, double coding,
                             double context, double multimodal, double speed, double cost,
                             String outputComplexity, String keyConstraints, String extractionRationale) {
         this.taskCategory = taskCategory;

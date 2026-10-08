@@ -113,8 +113,8 @@
                     </button>
                     <!-- MODEL SELECTOR PILL (ChatGPT Style) -->
                     <div class="model-selector-pill" id="modelSelectorPill" role="button" tabindex="0" aria-label="Selected Model Pipeline">
-                        <span class="model-name">ModelMatch 3.5</span>
-                        <span class="model-badge">Hybrid Java</span>
+                        <span class="model-name" id="topNavModelLabel">ModelMatch 2.0</span>
+                        <span class="model-badge" id="topNavModelBadge">38 Multi-Provider LLMs</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
@@ -334,14 +334,14 @@
             <div class="modal-header">
                 <div class="modal-title-row">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                    <h3>LLM Benchmark Database & Capabilities Matrix</h3>
+                    <h3>LLM Benchmark Database & Capabilities Matrix (<span id="catalogModelCount">38 Models</span>)</h3>
                 </div>
                 <button class="modal-close-btn" id="closeCatalogBtn">&times;</button>
             </div>
             <div class="modal-body">
-                <p class="modal-intro">All model scores are indexed in the Java ModelMatch Database and derived from verified empirical benchmarks (SWE-bench Verified, LiveCodeBench, MMLU-Pro, MATH-500, Chatbot Arena Elo).</p>
+                <p class="modal-intro">Empirical model benchmark matrix persisted in SQLite relational database across 14 leading AI providers. All citations derived from official publications and transparent evaluation suites.</p>
                 <div class="catalog-filter-bar">
-                    <input type="text" id="catalogSearchInput" placeholder="Filter by model name, provider (e.g. Google, OpenAI, Anthropic)...">
+                    <input type="text" id="catalogSearchInput" placeholder="Filter by model name, provider (e.g. OpenAI, Anthropic, DeepSeek, Google, Meta, Mistral, Alibaba)...">
                 </div>
                 <div class="table-responsive">
                     <table class="benchmark-table">
@@ -349,6 +349,7 @@
                             <tr>
                                 <th>Model</th>
                                 <th>Provider</th>
+                                <th>Execution</th>
                                 <th>Reasoning</th>
                                 <th>Coding</th>
                                 <th>Context</th>
@@ -420,11 +421,19 @@
                         <span class="spec-val">Cosine Similarity + Multi-Criteria Weighted Fusion</span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Generative AI Engine:</span>
+                        <span class="spec-label">Recommendation Catalog:</span>
+                        <span class="spec-val" id="specModelCount">38 Frontier Models (14 Providers)</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Database Architecture:</span>
+                        <span class="spec-val" id="specDbArch">SQLite Relational JDBC (data/modelmatch.db)</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">AI Analysis Provider:</span>
                         <span class="spec-val">Google Gemini 3.5 Flash</span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">API Key:</span>
+                        <span class="spec-label">Gemini API Key:</span>
                         <span class="spec-val" id="specApiKeyMasked">AQ.Ab8R...1Q</span>
                     </div>
                     <div class="spec-item">

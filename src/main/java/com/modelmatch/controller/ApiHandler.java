@@ -138,6 +138,10 @@ public class ApiHandler implements HttpHandler {
             geminiInsights = geminiService.generatePersonalizedExplanation(prompt, req, topModel, request.getUserApiKey());
         }
 
+        // 7. Relational Persistence & Audit Logging
+        String queryId = UUID.randomUUID().toString();
+        modelDatabase.logRecommendation(queryId, prompt, category.name(), topModel.getModel().getId(), topModel.getFinalScore());
+
         long duration = System.currentTimeMillis() - startTime;
 
         RecommendationResponse resp = new RecommendationResponse();
@@ -155,7 +159,7 @@ public class ApiHandler implements HttpHandler {
         resp.setGeminiAiInsights(geminiInsights);
         resp.setGeminiPowered(isGeminiUsed);
         resp.setExecutionTimeMs(duration);
-        resp.setEngineInfo("ModelMatch 1.0 (Java 21 LTS + TF-IDF Classifier + Cosine Similarity + Gemini 3.5 Flash)");
+        resp.setEngineInfo("ModelMatch 2.0 (Java 21 LTS + 38 Multi-Provider LLMs + SQLite JDBC + Gemini AI Analysis)");
 
         sendJsonResponse(exchange, 200, resp);
     }
