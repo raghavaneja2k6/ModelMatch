@@ -1,0 +1,51 @@
+# ==============================================================================
+# ModelMatch .gitignore
+# Prevents sensitive credentials, build artifacts, and OS files from being committed
+# ==============================================================================
+
+# Environment & Secret files (STRICTLY FORBIDDEN IN GIT)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+credentials/
+application-local.properties
+application-secrets.properties
+
+# Build artifacts & runtime directories
+target/
+build/
+out/
+bin/
+*.class
+
+# Embedded local Maven binaries
+apache-maven-*/
+
+# IDE & Editor metadata
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Operating system & temporary files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+~$*.pptx
+*.pptx.tmp
+
+# Python cache & temporary tools
+__pycache__/
+*.pyc
+*.pyo
+scan_secrets.py
+slide_previews/

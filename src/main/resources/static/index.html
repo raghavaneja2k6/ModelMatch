@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ModelMatch — AI Model Recommendation & Ranking Engine</title>
+    <meta name="description" content="ModelMatch is an intelligent large language model recommendation and ranking engine. Classifies natural language requirements and matches against empirical AI benchmarks.">
+    <meta name="theme-color" content="#212121">
+
+    <!-- Preload LCP Icon for Instant Loading -->
+    <link rel="preload" href="logo-64.png" as="image" type="image/png" fetchpriority="high">
+
+    <!-- Google Fonts with display=swap for zero font-blocking -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="64x64" href="logo-64.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo-192.png">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+    <div class="app-layout">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="newChatBtn" title="Start a new recommendation query">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>New Match</span>
+                </button>
+                <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Toggle Sidebar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- QUICK SHORTCUTS -->
+            <div class="sidebar-quick-actions">
+                <button class="quick-nav-btn" id="openWeightsModalBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                    <span>Priority Weights</span>
+                </button>
+                <button class="quick-nav-btn" id="openCatalogBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                    <span>LLM Benchmark Matrix</span>
+                </button>
+                <button class="quick-nav-btn" id="openCompareBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Model Comparison</span>
+                </button>
+            </div>
+
+            <!-- CHAT HISTORY -->
+            <div class="sidebar-section-title">Recent Matches</div>
+            <div class="chat-history-list" id="chatHistoryList">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- SIDEBAR FOOTER -->
+            <div class="sidebar-footer">
+                <div class="user-profile-badge" id="openSettingsBtn" title="Engine & API Status" role="button" tabindex="0" aria-label="Open Engine & API Settings">
+                    <div class="avatar-gemini"><img src="logo-64.png" alt="ModelMatch" width="28" height="28" style="border-radius:6px;display:block;"></div>
+                    <div class="user-profile-info">
+                        <div class="user-profile-name">ModelMatch Java</div>
+                        <div class="user-profile-status"><span class="status-dot"></span> Gemini 3.5 Flash Active</div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CHAT CONTAINER -->
+        <main class="main-content">
+            <!-- TOP NAVBAR -->
+            <header class="top-navbar">
+                <div class="top-nav-left">
+                    <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" aria-label="Toggle Navigation Menu">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <!-- MODEL SELECTOR PILL (ChatGPT Style) -->
+                    <div class="model-selector-pill" id="modelSelectorPill" role="button" tabindex="0" aria-label="Selected Model Pipeline">
+                        <span class="model-name">ModelMatch 3.5</span>
+                        <span class="model-badge">Hybrid Java</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="top-nav-right">
+                    <button class="icon-nav-btn" id="openWeightsTopBtn" title="Adjust priority weights" aria-label="Tune Priority Weights">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                    </button>
+                    <button class="icon-nav-btn" id="clearChatBtn" title="Clear current view" aria-label="Clear current match view">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- CHAT SCROLL AREA -->
+            <div class="chat-container" id="chatContainer">
+                <!-- HERO WELCOME (Shown before first query) -->
+                <div class="welcome-hero" id="welcomeHero">
+                    <div class="hero-logo">
+                        <img src="logo-64.png" alt="ModelMatch Logo" class="hero-app-logo" width="48" height="48" fetchpriority="high">
+                    </div>
+                    <h1 class="hero-title">Where should your AI task begin?</h1>
+                    <p class="hero-subtitle">Describe your project, constraints, or budget. ModelMatch classifies your requirements, performs vector cosine similarity, and recommends the optimal LLM with full explainability.</p>
+
+                    <!-- QUICK SUGGESTION CARDS -->
+                    <div class="suggestion-grid">
+                        <div class="suggestion-card" data-prompt="I need to build a production-ready REST API. It requires complex reasoning, lots of code, a large context window, and I have a limited budget.">
+                            <div class="suggestion-icon code-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                            </div>
+                            <div class="suggestion-text">
+                                <div class="suggestion-headline">Production REST API</div>
+                                <div class="suggestion-desc">Complex reasoning, heavy code, 1M context, tight budget</div>
+                            </div>
+                        </div>
+
+                        <div class="suggestion-card" data-prompt="Solve an advanced mathematical proof involving differential geometry and probability. High reasoning is critical; budget is not an issue.">
+                            <div class="suggestion-icon math-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+                            </div>
+                            <div class="suggestion-text">
+                                <div class="suggestion-headline">Advanced Math & Logic</div>
+                                <div class="suggestion-desc">Formal proofs, deep reasoning, maximum precision</div>
+                            </div>
+                        </div>
+
+                        <div class="suggestion-card" data-prompt="Analyze a 150-page financial quarterly report containing tables, charts, and diagrams. Extract revenue drivers and summarize risks.">
+                            <div class="suggestion-icon vision-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            </div>
+                            <div class="suggestion-text">
+                                <div class="suggestion-headline">Multimodal Document Analysis</div>
+                                <div class="suggestion-desc">Ingest financial charts, large context, executive summary</div>
+                            </div>
+                        </div>
+
+                        <div class="suggestion-card" data-prompt="High-volume real-time translation of customer support tickets across 10 languages. Ultra-low latency and minimal cost per token are essential.">
+                            <div class="suggestion-icon speed-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            </div>
+                            <div class="suggestion-text">
+                                <div class="suggestion-headline">Real-time Batch Translation</div>
+                                <div class="suggestion-desc">Sub-second latency, rock-bottom cost per 1M tokens</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MESSAGES THREAD (Appended dynamically) -->
+                <div class="messages-thread" id="messagesThread"></div>
+            </div>
+
+            <!-- PROMPT INPUT CONTAINER (Floating at bottom) -->
+            <div class="prompt-section">
+                <!-- EXPANDABLE WEIGHTS OVERLAY PANEL -->
+                <div class="weights-flyout" id="weightsFlyout">
+                    <div class="weights-flyout-header">
+                        <div class="flyout-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2.2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <div>
+                                <span class="flyout-heading">Fine-Tune What Matters Most</span>
+                                <span class="flyout-subheading">Choose a 1-click preset or customize individual sliders</span>
+                            </div>
+                        </div>
+                        <button class="close-flyout-btn" id="closeWeightsFlyoutBtn" title="Close">&times;</button>
+                    </div>
+
+                    <!-- 1-CLICK PRESETS BAR -->
+                    <div class="weights-presets-bar">
+                        <span class="preset-label">Presets:</span>
+                        <button type="button" class="preset-chip active" data-preset="adaptive">🎯 Adaptive Auto</button>
+                        <button type="button" class="preset-chip" data-preset="coding">💻 Coding & Dev</button>
+                        <button type="button" class="preset-chip" data-preset="reasoning">🧠 Deep Reasoning</button>
+                        <button type="button" class="preset-chip" data-preset="budget">💰 Budget & Speed</button>
+                        <button type="button" class="preset-chip" data-preset="context">📚 Massive Context</button>
+                        <button type="button" class="preset-chip" data-preset="balanced">⚖️ Equal / Balanced</button>
+                    </div>
+
+                    <div class="weights-grid">
+                        <div class="weight-control">
+                            <div class="weight-label-row">
+                                <span>🧠 Reasoning & Logic</span>
+                                <span class="weight-value" id="valReasoning">25%</span>
+                            </div>
+                            <input type="range" class="weight-slider" id="sliderReasoning" min="0" max="100" value="25">
+                        </div>
+                        <div class="weight-control">
+                            <div class="weight-label-row">
+                                <span>💻 Code Generation</span>
+                                <span class="weight-value" id="valCoding">25%</span>
+                            </div>
+                            <input type="range" class="weight-slider" id="sliderCoding" min="0" max="100" value="25">
+                        </div>
+                        <div class="weight-control">
+                            <div class="weight-label-row">
+                                <span>📚 Long Context</span>
+                                <span class="weight-value" id="valContext">15%</span>
+                            </div>
+                            <input type="range" class="weight-slider" id="sliderContext" min="0" max="100" value="15">
+                        </div>
+                        <div class="weight-control">
+                            <div class="weight-label-row">
+                                <span>👁️ Vision & Documents</span>
+                                <span class="weight-value" id="valMultimodal">10%</span>
+                            </div>
+                            <input type="range" class="weight-slider" id="sliderMultimodal" min="0" max="100" value="10">
+                        </div>
+                        <div class="weight-control">
+                            <div class="weight-label-row">
+                                <span>⚡ Speed & Latency</span>
+                                <span class="weight-value" id="valSpeed">10%</span>
+                            </div>
+                            <input type="range" class="weight-slider" id="sliderSpeed" min="0" max="100" value="10">
+                        </div>
+                        <div class="weight-control">
+                            <div class="weight-label-row">
+                                <span>💰 Cost Savings / Budget</span>
+                                <span class="weight-value" id="valCost">15%</span>
+                            </div>
+                            <input type="range" class="weight-slider" id="sliderCost" min="0" max="100" value="15">
+                        </div>
+                    </div>
+                    <div class="weights-footer">
+                        <button class="btn-text" id="resetWeightsBtn">Reset to Defaults</button>
+                        <div class="weights-footer-right">
+                            <span class="weights-sum-pill" id="weightsSumPill">Sum: 100%</span>
+                            <button class="btn-done" id="doneWeightsBtn">Done</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK PROMPT SUGGESTION CHIPS (Visible in conversation mode) -->
+                <div class="prompt-quick-chips" id="quickPromptChips" style="display: none;">
+                    <button type="button" class="quick-chip" data-prompt="I need to build a production-ready REST API. It requires complex reasoning, lots of code, a large context window, and I have a limited budget.">
+                        💻 Production REST API
+                    </button>
+                    <button type="button" class="quick-chip" data-prompt="Solve an advanced mathematical proof involving differential geometry and probability. High reasoning is critical; budget is not an issue.">
+                        🧠 Math & Logic Proof
+                    </button>
+                    <button type="button" class="quick-chip" data-prompt="Analyze a 150-page financial quarterly report containing tables, charts, and diagrams. Extract revenue drivers and summarize risks.">
+                        📊 150-Page PDF & Charts
+                    </button>
+                    <button type="button" class="quick-chip" data-prompt="High-volume real-time translation of customer support tickets across 10 languages. Ultra-low latency and minimal cost per token are essential.">
+                        ⚡ Fast Budget Translation
+                    </button>
+                </div>
+
+                <div class="prompt-capsule">
+                    <button class="capsule-addon-btn" id="toggleWeightsBtn" title="Tune Priority Weights">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                        <span class="btn-tooltip-label">Weights</span>
+                    </button>
+
+                    <textarea id="promptInput" rows="1" placeholder="Write your prompt here..."></textarea>
+
+                    <button class="send-btn" id="sendBtn" title="Find Best Model">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+                <div class="prompt-disclaimer">
+                    ModelMatch analyzes requirements, matches empirical benchmark vectors, and explains why each model was chosen.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: BENCHMARK MATRIX / MODEL CATALOG -->
+    <div class="modal-backdrop" id="catalogModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    <h3>LLM Benchmark Database & Capabilities Matrix</h3>
+                </div>
+                <button class="modal-close-btn" id="closeCatalogBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-intro">All model scores are indexed in the Java ModelMatch Database and derived from verified empirical benchmarks (SWE-bench Verified, LiveCodeBench, MMLU-Pro, MATH-500, Chatbot Arena Elo).</p>
+                <div class="catalog-filter-bar">
+                    <input type="text" id="catalogSearchInput" placeholder="Filter by model name, provider (e.g. Google, OpenAI, Anthropic)...">
+                </div>
+                <div class="table-responsive">
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Provider</th>
+                                <th>Reasoning</th>
+                                <th>Coding</th>
+                                <th>Context</th>
+                                <th>Vision</th>
+                                <th>Speed</th>
+                                <th>Input / 1M</th>
+                                <th>Output / 1M</th>
+                                <th>Benchmark Citation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalogTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: HEAD-TO-HEAD COMPARISON -->
+    <div class="modal-backdrop" id="compareModal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <h3>Head-to-Head Model Comparison</h3>
+                </div>
+                <button class="modal-close-btn" id="closeCompareBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="compare-selectors">
+                    <div class="selector-group">
+                        <label>Model A</label>
+                        <select id="selectModelA" class="form-select"></select>
+                    </div>
+                    <div class="selector-vs">VS</div>
+                    <div class="selector-group">
+                        <label>Model B</label>
+                        <select id="selectModelB" class="form-select"></select>
+                    </div>
+                </div>
+
+                <div class="comparison-display" id="comparisonDisplay">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SETTINGS & SYSTEM SPECS -->
+    <div class="modal-backdrop" id="settingsModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-header">
+                <h3>System Architecture & API Status</h3>
+                <button class="modal-close-btn" id="closeSettingsBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-spec-list">
+                    <div class="spec-item">
+                        <span class="spec-label">Backend Platform:</span>
+                        <span class="spec-val" id="specJavaVersion">Java 21 LTS (OpenJDK)</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Classification Algorithm:</span>
+                        <span class="spec-val">TF-IDF Vectorizer + Cosine Centroids</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Recommendation Logic:</span>
+                        <span class="spec-val">Cosine Similarity + Multi-Criteria Weighted Fusion</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Generative AI Engine:</span>
+                        <span class="spec-val">Google Gemini 3.5 Flash</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">API Key:</span>
+                        <span class="spec-val" id="specApiKeyMasked">AQ.Ab8R...1Q</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Server Uptime:</span>
+                        <span class="spec-val"><span class="badge-online">Healthy / Active</span></span>
+                    </div>
+                </div>
+
+                <div class="api-key-edit-box">
+                    <label>Update Gemini API Key (optional):</label>
+                    <div class="key-input-row">
+                        <input type="password" id="customApiKeyInput" placeholder="Enter custom Gemini API key...">
+                        <button class="btn-primary" id="saveApiKeyBtn">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
